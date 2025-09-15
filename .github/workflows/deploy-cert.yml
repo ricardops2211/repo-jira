@@ -1,38 +1,41 @@
-name: Certificación Release
+name: Deploy CERT
 
 on:
-  push:
-    branches:
-      - main
-
-permissions:
-  contents: write   # Necesario para crear el release
+  workflow_dispatch:
 
 jobs:
-  cert-release:
+  release-cert:
     runs-on: ubuntu-latest
-    environment: cert
-
+    outputs:
+      rc_tag: ${{ steps.set-tag.outputs.rc_tag }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Generar Tag dinámico
-        id: tag
+      - name: Generar RC Tag dinámico
+        id: set-tag
         run: |
           DATE=$(date +'%Y%m%d')
           RAND=$(openssl rand -hex 2)
           TAG="RC-${DATE}-${RAND}"
-          echo "tag_name=$TAG" >> $GITHUB_OUTPUT
 
-      - name: Crear release en GitHub
+          echo "rc_tag=$TAG" >> $GITHUB_OUTPUT
+          echo "✅ RC Tag generado: $TAG"
+
+          # Guardamos en un JSON para usar en el siguiente paso
+          echo "{\"rc_tag\": \"$TAG\"}" > rc_tag.json
+
+      - name: Subir artifact con RC Tag
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc-tag
+          path: rc_tag.json
+
+      - name: Crear Release en GitHub
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.tag.outputs.tag_name }}
-          name: "Release Candidate ${{ steps.tag.outputs.tag_name }}"
-          body: "Release Candidate para CERT"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ steps.set-tag.outputs.rc_tag }}
+          name: Release Candidate ${{ steps.set-tag.outputs.rc_tag }}
+          body: Release Candidate para CERT
+          overwrite_files: true
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Verificar Docker instalado
         run: |
