@@ -22,7 +22,7 @@ jobs:
           echo "rc_tag=$TAG" >> $GITHUB_OUTPUT
           echo "✅ RC Tag generado: $TAG"
 
-          # Guardamos en un JSON para usar en el siguiente paso
+          # Guardamos en un JSON para usar en otros jobs si hace falta
           echo "{\"rc_tag\": \"$TAG\"}" > rc_tag.json
 
       - name: Subir artifact con RC Tag
@@ -46,8 +46,8 @@ jobs:
           docker compose version || true
 
       - name: Construir imagen Docker
-        run: docker build -t myapp-cert:${{ steps.tag.outputs.tag_name }} -f docker/cert/Dockerfile .
+        run: docker build -t myapp-cert:${{ steps.set-tag.outputs.rc_tag }} -f docker/cert/Dockerfile .
 
       - name: Levantar contenedor con Docker Compose
         working-directory: docker/cert
-        run: TAG_NAME=${{ steps.tag.outputs.tag_name }} docker compose up -d
+        run: TAG_NAME=${{ steps.set-tag.outputs.rc_tag }} docker compose up -d
