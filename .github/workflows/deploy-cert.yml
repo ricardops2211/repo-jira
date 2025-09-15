@@ -34,20 +34,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 🔹 Instalar Docker & Docker Compose
-      - name: Instalar Docker y Docker Compose
+      # 🔹 Verificar Docker preinstalado
+      - name: Verificar versión de Docker
         run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io docker-compose
           docker --version
-          docker-compose --version
+          docker compose version || true
 
       # 🔹 Construir imagen con Dockerfile
       - name: Construir imagen Docker
         working-directory: docker/cert
         run: docker build -t myapp-cert:${{ steps.tag.outputs.tag_name }} .
 
-      # 🔹 Levantar stack con Docker Compose
+      # 🔹 Levantar stack con Docker Compose v2
       - name: Levantar contenedor con Docker Compose
         working-directory: docker/cert
-        run: docker-compose up -d
+        run: docker compose up -d
