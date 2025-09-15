@@ -5,9 +5,12 @@ on:
     branches:
       - main
 
+permissions:           # 👈 Esto habilita que el token pueda crear releases
+  contents: write
+
 jobs:
   cert-release:
-    runs-on: ubuntu-latest   # 🔹 GitHub-hosted runner
+    runs-on: ubuntu-latest
     environment: cert
     steps:
       - name: Checkout
@@ -17,7 +20,7 @@ jobs:
         id: tag
         run: |
           DATE=$(date +'%Y%m%d')
-          RAND=$(openssl rand -hex 2) # 4 caracteres aleatorios
+          RAND=$(openssl rand -hex 2)
           TAG="RC-${DATE}-${RAND}"
           echo "tag_name=$TAG" >> $GITHUB_OUTPUT
 
@@ -29,11 +32,3 @@ jobs:
           body: "Release Candidate para CERT"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Construir imagen Docker
-        working-directory: docker/cert
-        run: docker build -t myapp-cert:${{ steps.tag.outputs.tag_name }} .
-
-      - name: Levantar contenedor con Docker Compose
-        working-directory: docker/cert
-        run: docker compose up -d
