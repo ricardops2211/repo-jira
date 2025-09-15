@@ -3,7 +3,7 @@ name: Certificación Release
 on:
   push:
     branches:
-      - mainWE
+      - main
 
 permissions:
   contents: write   # Necesario para crear el release
