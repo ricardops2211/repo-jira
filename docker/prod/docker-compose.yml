@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  myapp-prod:
+    build: .
+    container_name: myapp-prod
+    environment:
+      - ENVIRONMENT=PROD
+    ports:
+      - "8080:8080"
+    restart: always

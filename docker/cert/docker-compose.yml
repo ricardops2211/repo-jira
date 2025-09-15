@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  myapp-cert:
+    build: .
+    container_name: myapp-cert
+    environment:
+      - ENVIRONMENT=CERT
+    ports:
+      - "8081:8080"

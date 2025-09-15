@@ -1,0 +1,31 @@
+
+name: Producción Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Tag RC aprobado para producción"
+        required: true
+
+jobs:
+  prod-release:
+    runs-on: self-hosted
+    environment:
+      name: prod
+      url: https://miapp.prod.example.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Descargar artefacto de release
+        run: |
+          echo "Desplegando versión: ${{ github.event.inputs.tag_name }}"
+
+      - name: Construir imagen Docker
+        working-directory: docker/prod
+        run: docker build -t myapp-prod:${{ github.event.inputs.tag_name }} .
+
+      - name: Levantar contenedor con Docker Compose
+        working-directory: docker/prod
+        run: docker-compose up -d
