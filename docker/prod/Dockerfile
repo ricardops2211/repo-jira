@@ -5,13 +5,14 @@ RUN apt-get update && \
     apt-get install -y ansible sshpass && \
     rm -rf /var/lib/apt/lists/*
 
-# Crear directorio de la app
+# Directorio de la app
 WORKDIR /app
 
-# Copiar código de la app
-COPY ../../app /app
+# Copiar código de la app (carpeta app del repo)
+COPY ../../app/ /app/
 
-# Instalar dependencias Python (si las tienes en requirements.txt)
-# RUN pip install -r requirements.txt
+# Instalar dependencias si existen
+RUN if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+# Comando por defecto
 CMD ["python", "main.py"]
