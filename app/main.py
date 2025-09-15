@@ -1,8 +1,18 @@
 import os
-import datetime
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
-env = os.getenv("ENVIRONMENT", "DEV")
-print(f"🔥 Ejecutando aplicación en entorno: {env}")
+PORT = int(os.environ.get("PORT", 8080))
+ENV = os.environ.get("ENV", "cert")
 
-# Simular lógica de la app
-print("📦 App levantada correctamente!")
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        message = f"Hello from {ENV} environment! Path: {self.path}\n"
+        self.send_response(200)
+        self.send_header("Content-type", "text/plain")
+        self.end_headers()
+        self.wfile.write(message.encode())
+
+if __name__ == "__main__":
+    print(f"🚀 Starting server on port {PORT} in {ENV} mode...")
+    server = HTTPServer(("", PORT), Handler)
+    server.serve_forever()
