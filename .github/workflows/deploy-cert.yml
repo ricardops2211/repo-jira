@@ -2,6 +2,9 @@ name: Deploy CERT
 
 on:
   workflow_dispatch:
+  repository_dispatch:
+    types: [trigger-cert]
+
 
 permissions:
   contents: write
