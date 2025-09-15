@@ -7,7 +7,7 @@ on:
 
 jobs:
   cert-release:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest   # 🔹 GitHub-hosted runner
     environment: cert
     steps:
       - name: Checkout
@@ -36,4 +36,4 @@ jobs:
 
       - name: Levantar contenedor con Docker Compose
         working-directory: docker/cert
-        run: docker-compose up -d
+        run: docker compose up -d
