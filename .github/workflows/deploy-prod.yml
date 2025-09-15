@@ -9,7 +9,7 @@ on:
 
 jobs:
   prod-release:
-    runs-on: ubuntu-latest   # 🔹 Usa Ubuntu de GitHub
+    runs-on: ubuntu-latest   # 🔹 Ubuntu runner de GitHub
     environment:
       name: prod
       url: https://miapp.prod.example.com
@@ -22,10 +22,15 @@ jobs:
         run: |
           echo "Desplegando versión: ${{ github.event.inputs.tag_name }}"
 
+      - name: Verificar Docker instalado
+        run: |
+          docker --version
+          docker compose version || true
+
       - name: Construir imagen Docker
         working-directory: docker/prod
         run: docker build -t myapp-prod:${{ github.event.inputs.tag_name }} .
 
       - name: Levantar contenedor con Docker Compose
         working-directory: docker/prod
-        run: docker compose up -d
+        run: TAG_NAME=${{ github.event.inputs.tag_name }} docker compose up -d
