@@ -1,0 +1,6 @@
+# Ignorar archivos innecesarios en el build
+.git
+.github
+docker
+*.md
+*.log
