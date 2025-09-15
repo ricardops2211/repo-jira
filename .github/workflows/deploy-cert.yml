@@ -1,4 +1,4 @@
-name: Certificación ReleaseS
+name: Certificación Release
 
 on:
   push:
@@ -34,18 +34,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 🔹 Verificar Docker preinstalado
+      # 🔹 Verificar Docker ya está instalado
       - name: Verificar versión de Docker
         run: |
           docker --version
           docker compose version || true
 
-      # 🔹 Construir imagen con Dockerfile
+      # 🔹 Construir imagen con Dockerfile (contexto raíz del repo)
       - name: Construir imagen Docker
-        working-directory: docker/cert
-        run: docker build -t myapp-cert:${{ steps.tag.outputs.tag_name }} .
+        run: docker build -t myapp-cert:${{ steps.tag.outputs.tag_name }} -f docker/cert/Dockerfile .
 
-      # 🔹 Levantar stack con Docker Compose v2
+      # 🔹 Levantar stack con Docker Compose (usa el tag dinámico)
       - name: Levantar contenedor con Docker Compose
         working-directory: docker/cert
         run: docker compose up -d
