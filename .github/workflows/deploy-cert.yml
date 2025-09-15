@@ -3,7 +3,7 @@ name: Certificación Release
 on:
   push:
     branches:
-      - main
+      - mainWE
 
 permissions:
   contents: write   # Necesario para crear el release
@@ -34,17 +34,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 🔹 Verificar Docker ya está instalado
-      - name: Verificar versión de Docker
+      - name: Verificar Docker instalado
         run: |
           docker --version
           docker compose version || true
 
-      # 🔹 Construir imagen con Dockerfile (contexto raíz del repo)
       - name: Construir imagen Docker
         run: docker build -t myapp-cert:${{ steps.tag.outputs.tag_name }} -f docker/cert/Dockerfile .
 
-      # 🔹 Levantar stack con Docker Compose (usa el tag dinámico)
       - name: Levantar contenedor con Docker Compose
         working-directory: docker/cert
-        run: docker compose up -d
+        run: TAG_NAME=${{ steps.tag.outputs.tag_name }} docker compose up -d
