@@ -1,10 +1,12 @@
-version: "3.8"
-
 services:
   myapp-cert:
-    build: .
+    build:
+      context: ../..                # raíz del repo (incluye app/)
+      dockerfile: docker/cert/Dockerfile
+    image: myapp-cert:${TAG_NAME:-latest}
     container_name: myapp-cert
-    environment:
-      - ENVIRONMENT=CERT
+    restart: always
     ports:
-      - "8081:8080"
+      - "8080:8080"
+    environment:
+      - ENV=cert
