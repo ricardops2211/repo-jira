@@ -5,13 +5,14 @@ on:
     branches:
       - main
 
-permissions:           # 👈 Esto habilita que el token pueda crear releases
-  contents: write
+permissions:
+  contents: write   # Necesario para crear el release
 
 jobs:
   cert-release:
     runs-on: ubuntu-latest
     environment: cert
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,3 +33,21 @@ jobs:
           body: "Release Candidate para CERT"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 🔹 Instalar Docker & Docker Compose
+      - name: Instalar Docker y Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io docker-compose
+          docker --version
+          docker-compose --version
+
+      # 🔹 Construir imagen con Dockerfile
+      - name: Construir imagen Docker
+        working-directory: docker/cert
+        run: docker build -t myapp-cert:${{ steps.tag.outputs.tag_name }} .
+
+      # 🔹 Levantar stack con Docker Compose
+      - name: Levantar contenedor con Docker Compose
+        working-directory: docker/cert
+        run: docker-compose up -d
