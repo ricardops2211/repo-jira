@@ -8,10 +8,10 @@ RUN apt-get update && \
 # Crear directorio de la app
 WORKDIR /app
 
-# Copiar código de la app
-COPY ../../app /app
+# Copiar código de la app (desde la raíz del repo)
+COPY app /app
 
-# Instalar dependencias Python (si las tienes en requirements.txt)
+# Instalar dependencias Python (si existe requirements.txt)
 # RUN pip install -r requirements.txt
 
 CMD ["python", "main.py"]
