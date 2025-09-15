@@ -1,11 +1,12 @@
-version: "3.8"
-
 services:
   myapp-prod:
-    build: .
+    build:
+      context: ../..                # raíz del repo (incluye app/)
+      dockerfile: docker/prod/Dockerfile
+    image: myapp-prod:${TAG_NAME:-latest}
     container_name: myapp-prod
-    environment:
-      - ENVIRONMENT=PROD
-    ports:
-      - "8080:8080"
     restart: always
+    ports:
+      - "80:8080"   # Producción expuesto en el puerto 80
+    environment:
+      - ENV=prod
