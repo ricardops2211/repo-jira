@@ -7,6 +7,10 @@ on:
         description: "Tag RC aprobado para producción"
         required: true
 
+  repository_dispatch:
+    types: [trigger-prod]
+
+
 jobs:
   prod-release:
     runs-on: ubuntu-latest   # 🔹 Ubuntu runner de GitHub
@@ -18,6 +22,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+
       - name: Descargar artefacto de release
         run: |
           echo "Desplegando versión: ${{ github.event.inputs.tag_name }}"
@@ -27,10 +32,3 @@ jobs:
           docker --version
           docker compose version || true
 
-      - name: Construir imagen Docker
-        working-directory: docker/prod
-        run: docker build -t myapp-prod:${{ github.event.inputs.tag_name }} .
-
-      - name: Levantar contenedor con Docker Compose
-        working-directory: docker/prod
-        run: TAG_NAME=${{ github.event.inputs.tag_name }} docker compose up -d
