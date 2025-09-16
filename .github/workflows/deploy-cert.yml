@@ -49,8 +49,15 @@ jobs:
           docker compose version || true
 
       - name: Construir imagen Docker
-        run: docker build -t myapp-cert:${{ steps.set-tag.outputs.rc_tag }} -f docker/cert/Dockerfile .
+        run: docker build \
+          -t myapp-cert:${{ steps.set-tag.outputs.rc_tag }} \
+          -f docker/cert/Dockerfile \
+          .
+
 
       - name: Levantar contenedor con Docker Compose
         working-directory: docker/cert
-        run: TAG_NAME=${{ steps.set-tag.outputs.rc_tag }} docker compose up -d
+        run: |
+          export TAG_NAME=${{ steps.set-tag.outputs.rc_tag }}
+          docker compose up -d
+
